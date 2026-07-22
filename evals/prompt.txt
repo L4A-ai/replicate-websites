@@ -1,0 +1,8 @@
+Use $replicate-websites at SKILL_PATH to build a locally runnable visual and behavioral replica of
+TARGET_URL in the empty workspace WORKSPACE. Work only in that workspace and the provided skill;
+do not inspect other repositories, prior artifacts, or sibling cases. Inspect the source read-only
+and never submit to it. Implement source behavior locally where relevant. For an application form,
+use a synthetic same-origin backend, retain no applicant values or file bytes, and keep email
+disabled by default. Do not deploy. Finish only after using the skill's bundled audits at
+desktop:1440x1000, tablet:768x1024, mobile:390x844, and compact:360x800. Emit
+replica.manifest.json and report raw metrics and remaining discrepancies.

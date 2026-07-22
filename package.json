@@ -1,0 +1,35 @@
+{
+  "name": "replicate-websites-skill-repository",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "GitHub distribution and clean-slate evaluation harness for the Replicate Websites Codex skill.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/L4A-ai/replicate-websites.git"
+  },
+  "homepage": "https://github.com/L4A-ai/replicate-websites#readme",
+  "bugs": {
+    "url": "https://github.com/L4A-ai/replicate-websites/issues"
+  },
+  "keywords": [
+    "codex-skill",
+    "playwright",
+    "pixel-diff",
+    "website-replication"
+  ],
+  "workspaces": [
+    "skills/replicate-websites"
+  ],
+  "scripts": {
+    "test": "npm --workspace @l4a-ai/replicate-websites-skill test",
+    "test:evaluator": "node --test evals/tests/*.test.mjs",
+    "check:skill": "node evals/scripts/validate-skill.mjs",
+    "check:contamination": "node evals/scripts/check-contamination.mjs",
+    "validate": "npm run check:skill && npm run test && npm run test:evaluator && npm run check:contamination"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

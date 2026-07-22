@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "viewports": [
+    { "name": "desktop", "width": 1440, "height": 1000 },
+    { "name": "tablet", "width": 768, "height": 1024 },
+    { "name": "mobile", "width": 390, "height": 844 },
+    { "name": "compact", "width": 360, "height": 800 }
+  ],
+  "targets": [
+    {
+      "id": "case-a",
+      "label": "Ashby / Notion",
+      "url": "https://jobs.ashbyhq.com/notion/5b15697c-fa91-4511-9482-c98a6ff29f90",
+      "readySelector": "body",
+      "contaminationTokens": ["notion", "ashby hq", "5b15697c-fa91-4511-9482-c98a6ff29f90"]
+    },
+    {
+      "id": "case-b",
+      "label": "Akuna custom careers",
+      "url": "https://akunacapital.com/careers/job/8018847/?gh_jid=8018847&grnh.se=b664da131us",
+      "readySelector": "body",
+      "contaminationTokens": ["akunacapital", "akuna capital", "8018847", "b664da131us"]
+    },
+    {
+      "id": "case-c",
+      "label": "Lever / Exowatt",
+      "url": "https://jobs.lever.co/exowatt/46c8f4fd-f059-4ad6-a5f4-4fcd55d84f9c/apply",
+      "readySelector": "#application-form",
+      "contaminationTokens": ["exowatt", "lever / exowatt", "46c8f4fd-f059-4ad6-a5f4-4fcd55d84f9c"]
+    }
+  ]
+}

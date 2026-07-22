@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "mode": "{{REPLICA_MODE}}",
+  "start": {
+    "command": ["npm", "start"],
+    "healthPath": "/healthz"
+  },
+  "page": {
+    "path": "/",
+    "readySelector": "[data-replica-ready]"
+  },
+  "backend": {
+    "implementation": "replicate-websites-starter-v1",
+    "submitPath": "/api/applications",
+    "auditPath": "/api/replica-audit",
+    "emailEnabledByDefault": false,
+    "retainsApplicantValues": false
+  },
+  "interaction": {
+    "notApplicable": false,
+    "formSelector": "form"
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://l4a.ai/schemas/replicate-websites-eval-run-v2.json",
+  "title": "Replicate Websites evaluation run",
+  "type": "object",
+  "required": [
+    "schemaVersion", "runId", "caseId", "builder", "skill", "revision",
+    "evaluator", "isolation", "evidence", "result"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "runId": { "type": "string", "minLength": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "builder": {
+      "type": "object",
+      "required": ["id"],
+      "properties": { "id": { "type": "string", "minLength": 1 } },
+      "additionalProperties": false
+    },
+    "skill": {
+      "type": "object",
+      "required": ["gitSha", "sha256"],
+      "properties": {
+        "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "revision": {
+      "type": "object",
+      "required": ["gitSha", "repositoryClean", "trackedSkillMatched"],
+      "properties": {
+        "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "repositoryClean": { "const": true },
+        "trackedSkillMatched": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "evaluator": {
+      "type": "object",
+      "required": ["gitSha", "sha256"],
+      "properties": {
+        "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "isolation": {
+      "type": "object",
+      "required": [
+        "workspaceWasEmpty", "skillWasReadOnly", "priorArtifactsVisible",
+        "filesystemSandboxEnforced", "protectedEvidenceOutsideBuilderWritableRoots"
+      ],
+      "properties": {
+        "workspaceWasEmpty": { "const": true },
+        "skillWasReadOnly": { "const": true },
+        "priorArtifactsVisible": { "const": false },
+        "filesystemSandboxEnforced": { "const": true },
+        "protectedEvidenceOutsideBuilderWritableRoots": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["indexPath", "sha256"],
+          "properties": {
+            "indexPath": { "type": "string", "minLength": 1 },
+            "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+          },
+          "additionalProperties": false
+        },
+        { "type": "null" }
+      ]
+    },
+    "result": {
+      "type": "object",
+      "required": ["pass", "artifactPath", "failureCodes"],
+      "properties": {
+        "pass": { "type": "boolean" },
+        "artifactPath": { "type": "string", "minLength": 1 },
+        "failureCodes": {
+          "type": "array",
+          "items": {
+            "enum": ["SOURCE_UNSTABLE", "CAPTURE", "CONTENT", "SEMANTICS", "GEOMETRY", "RESPONSIVE", "TYPOGRAPHY", "ASSETS", "INTERACTION", "BACKEND", "SAFETY", "TOOLING"]
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

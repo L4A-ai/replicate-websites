@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://l4a.ai/schemas/replicate-websites-isolation-attestation-v2.json",
+  "title": "Replicate Websites pre-dispatch isolation attestation",
+  "type": "object",
+  "required": [
+    "schemaVersion", "recordedAt", "phase", "runId", "caseId", "workspace",
+    "builder", "skill", "revision", "evaluator", "prompt", "isolation", "evidence"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 2 },
+    "recordedAt": { "type": "string", "format": "date-time" },
+    "phase": { "const": "pre-dispatch" },
+    "runId": { "type": "string", "minLength": 1 },
+    "caseId": { "type": "string", "minLength": 1 },
+    "workspace": { "type": "string", "minLength": 1 },
+    "builder": {
+      "type": "object",
+      "required": ["id", "writableRoots"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]{0,127}$" },
+        "writableRoots": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "skill": {
+      "type": "object",
+      "required": ["root", "gitSha", "sha256", "fileCount"],
+      "properties": {
+        "root": { "type": "string", "minLength": 1 },
+        "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "fileCount": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "revision": {
+      "type": "object",
+      "required": [
+        "repositoryRoot", "gitSha", "repositoryClean", "headMatchedRequestedSha",
+        "trackedSkillPath", "trackedSkillMatched", "trackedSkillFileCount", "trackedSkillSha256"
+      ],
+      "properties": {
+        "repositoryRoot": { "type": "string", "minLength": 1 },
+        "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "repositoryClean": { "const": true },
+        "headMatchedRequestedSha": { "const": true },
+        "trackedSkillPath": { "const": "skills/replicate-websites" },
+        "trackedSkillMatched": { "const": true },
+        "trackedSkillFileCount": { "type": "integer", "minimum": 1 },
+        "trackedSkillSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "evaluator": {
+      "type": "object",
+      "required": ["root", "gitSha", "sha256", "fileCount", "totalBytes", "outsideBuilderWritableRoots"],
+      "properties": {
+        "root": { "type": "string", "minLength": 1 },
+        "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "fileCount": { "type": "integer", "minimum": 1 },
+        "totalBytes": { "type": "integer", "minimum": 1 },
+        "outsideBuilderWritableRoots": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "prompt": {
+      "type": "object",
+      "required": ["source", "copy", "sha256", "bytes"],
+      "properties": {
+        "source": { "type": "string", "minLength": 1 },
+        "copy": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "bytes": { "type": "integer", "minimum": 1, "maximum": 65536 }
+      },
+      "additionalProperties": false
+    },
+    "isolation": {
+      "type": "object",
+      "required": [
+        "workspaceWasEmpty", "skillWasReadOnly", "priorArtifactsVisible",
+        "filesystemSandboxEnforced", "workspaceIsExactWritableRoot",
+        "skillOutsideBuilderWritableRoots", "evaluatorOutsideBuilderWritableRoots",
+        "promptOutsideBuilderWritableRoots", "attestationOutsideBuilderWritableRoots"
+      ],
+      "properties": {
+        "workspaceWasEmpty": { "const": true },
+        "skillWasReadOnly": { "const": true },
+        "priorArtifactsVisible": { "const": false },
+        "filesystemSandboxEnforced": { "const": true },
+        "workspaceIsExactWritableRoot": { "const": true },
+        "skillOutsideBuilderWritableRoots": { "const": true },
+        "evaluatorOutsideBuilderWritableRoots": { "const": true },
+        "promptOutsideBuilderWritableRoots": { "const": true },
+        "attestationOutsideBuilderWritableRoots": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "workspaceInspection", "skillInspection", "priorArtifactsScope",
+        "filesystemSandbox", "outsideWritableRoots", "revisionInspection"
+      ],
+      "properties": {
+        "workspaceInspection": { "type": "string", "minLength": 1 },
+        "skillInspection": { "type": "string", "minLength": 1 },
+        "priorArtifactsScope": { "type": "string", "minLength": 1 },
+        "filesystemSandbox": { "type": "string", "minLength": 1 },
+        "outsideWritableRoots": { "type": "string", "minLength": 1 },
+        "revisionInspection": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

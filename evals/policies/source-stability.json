@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "gates": {
+    "maxTolerantDiffPercent": 0,
+    "maxStrictDiffPercent": 0,
+    "maxUnapprovedSemanticMismatches": 0,
+    "requireDimensionsMatch": true,
+    "requireCandidateStable": true,
+    "maxMaskedPixels": 0,
+    "maxCandidateCriticalFailures": 0,
+    "maxCandidatePageErrors": 100000,
+    "maxCandidateConsoleErrors": 100000,
+    "maxCandidateBlockedWrites": 100000,
+    "maxCandidateBlockedPrivateReads": 100000
+  },
+  "approvedSemanticMismatches": []
+}
