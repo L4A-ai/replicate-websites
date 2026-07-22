@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { createServer, request as httpRequest } from 'node:http';
+import { connect as connectTcp, createServer as createTcpServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
+import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
@@ -43,9 +45,20 @@ async function proxyGet(proxy, target) {
         body: Buffer.concat(chunks).toString('utf8')
       }));
     });
+    clientRequest.setTimeout(5000, () => {
+      clientRequest.destroy(new Error('proxy GET timed out'));
+    });
     clientRequest.once('error', rejectResponse);
     clientRequest.end();
   });
+}
+
+async function waitFor(predicate, message, timeoutMs = 3000) {
+  const deadline = Date.now() + timeoutMs;
+  while (!predicate()) {
+    if (Date.now() >= deadline) throw new Error(message);
+    await delay(10);
+  }
 }
 
 test('validating proxy resolves every public connection and pins the vetted address', async () => {
@@ -116,6 +129,67 @@ test('validating proxy rejects any private DNS answer but permits only its exact
     await mixedAnswerProxy.close();
     await loopbackProxy.close();
     await closeServer(origin);
+  }
+});
+
+test('validating proxy absorbs client CONNECT resets and closes the paired upstream', { timeout: 10000 }, async () => {
+  let tunnelSocket;
+  let tunnelClosed = false;
+  const tunnelOrigin = createTcpServer((socket) => {
+    tunnelSocket = socket;
+    socket.on('error', () => {});
+    socket.once('close', () => { tunnelClosed = true; });
+    const traffic = setInterval(() => {
+      if (!socket.destroyed) socket.write(Buffer.alloc(4096, 0x78));
+    }, 5);
+    traffic.unref();
+    socket.once('close', () => clearInterval(traffic));
+  });
+  const httpOrigin = createServer((_request, response) => {
+    response.writeHead(200, { 'content-type': 'text/plain' });
+    response.end('still-healthy');
+  });
+  const tunnelPort = await listen(tunnelOrigin);
+  const httpPort = await listen(httpOrigin);
+  const proxy = await createValidatingBrowserProxy({
+    resolver: async () => [{ address: '127.0.0.1', family: 4 }],
+    addressIsBlocked: () => false
+  });
+  let client;
+  try {
+    client = connectTcp({ host: proxy.host, port: proxy.port });
+    client.on('error', () => {});
+    let response = '';
+    let reset = false;
+    client.on('data', (chunk) => {
+      response += chunk.toString('latin1');
+      if (!reset && response.includes('200 Connection Established')) {
+        reset = true;
+        client.resetAndDestroy();
+      }
+    });
+    client.write(
+      `CONNECT tunnel-reset.invalid:${tunnelPort} HTTP/1.1\r\n`
+      + `Host: tunnel-reset.invalid:${tunnelPort}\r\n\r\n`
+    );
+
+    await waitFor(() => reset, 'the proxy never established the CONNECT tunnel');
+    await waitFor(() => tunnelClosed, 'the paired upstream socket remained open');
+    await waitFor(
+      () => proxy.stats.clientSocketErrors > 0,
+      'the accepted CONNECT reset was not recorded as a handled client socket error'
+    );
+    assert.equal(tunnelSocket.destroyed, true);
+    assert.deepEqual(
+      await proxyGet(proxy, `http://still-healthy.invalid:${httpPort}/proof`),
+      { status: 200, body: 'still-healthy' },
+      'one reset tunnel must not poison the proxy for later requests'
+    );
+  } finally {
+    client?.destroy();
+    await proxy.close();
+    await closeServer(tunnelOrigin);
+    await closeServer(httpOrigin);
   }
 });
 

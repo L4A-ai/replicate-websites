@@ -164,7 +164,7 @@ export async function requestPinnedHttpResource(rawUrl, {
   allowedLoopbackUrl = null,
   resolver = resolvePublicHostAddresses,
   addressIsBlocked = isPrivateOrReservedAddress,
-  resolveTimeoutMs = 3000,
+  resolveTimeoutMs = 10000,
   timeoutMs = 10000,
   maximumBytes = 15 * 1024 * 1024,
   headers = {}
@@ -245,7 +245,7 @@ export async function createValidatingBrowserProxy({
   addressIsBlocked = isPrivateOrReservedAddress,
   connect = netConnect,
   request = httpRequest,
-  resolveTimeoutMs = 3000,
+  resolveTimeoutMs = 10000,
   connectTimeoutMs = 10000
 } = {}) {
   const allowedLoopback = allowedLoopbackEndpoint(allowedLoopbackUrl);
@@ -254,6 +254,7 @@ export async function createValidatingBrowserProxy({
   const stats = {
     httpRequests: 0,
     connectTunnels: 0,
+    clientSocketErrors: 0,
     rejectedDestinations: 0,
     dnsResolutions: 0
   };
@@ -315,10 +316,15 @@ export async function createValidatingBrowserProxy({
 
   server.on('connect', async (requestMessage, clientSocket, head) => {
     stats.connectTunnels += 1;
+    let upstream;
+    clientSocket.once('close', () => {
+      if (upstream && !upstream.destroyed) upstream.destroy();
+    });
     try {
       const endpoint = parseAuthority(requestMessage.url);
       const destination = await resolveDestination(endpoint);
-      const upstream = connect({
+      if (clientSocket.destroyed) return;
+      upstream = connect({
         host: destination.address,
         family: destination.family,
         port: endpoint.port
@@ -348,6 +354,10 @@ export async function createValidatingBrowserProxy({
   server.on('connection', (socket) => {
     sockets.add(socket);
     socket.once('close', () => sockets.delete(socket));
+    socket.on('error', () => {
+      stats.clientSocketErrors += 1;
+      socket.destroy();
+    });
   });
   server.on('clientError', (_error, socket) => {
     if (!socket.destroyed) socket.end('HTTP/1.1 400 Bad Request\r\nConnection: close\r\n\r\n');
