@@ -19,6 +19,12 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npx playwright install --with-deps chromium
+      - name: Enable Chromium user-namespace sandbox
+        run: |
+          # Keep Chromium's sandbox enabled on Ubuntu runners that restrict downloaded builds.
+          if [[ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
       - run: npm run validate
       - run: npm run check:install
       - run: npm pack --workspace @l4a-ai/replicate-websites-skill --dry-run --json
