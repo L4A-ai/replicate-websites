@@ -1,5 +1,7 @@
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+[![skills.sh](https://skills.sh/b/l4a-ai/replicate-websites)](https://skills.sh/l4a-ai/replicate-websites)
+
 # replicate-websites
 
 `replicate-websites` 是一个可移植的 Agent Skill，用于重建已获授权的网页，并通过确定性的
