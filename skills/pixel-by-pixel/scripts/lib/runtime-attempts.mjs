@@ -119,7 +119,7 @@ export function runtimeAttemptInitScript({ blockEffects }) {
       globalThis.WebSocket = new Proxy(NativeWebSocket, {
         construct(Target, argumentsList, NewTarget) {
           record('websocket', { url: urlText(argumentsList[0]) });
-          if (blockEffects) throw new DOMException('WebSocket blocked by replicate-websites.', 'SecurityError');
+          if (blockEffects) throw new DOMException('WebSocket blocked by pixel-by-pixel.', 'SecurityError');
           return Reflect.construct(Target, argumentsList, NewTarget);
         }
       });
@@ -139,7 +139,7 @@ export function runtimeAttemptInitScript({ blockEffects }) {
         value: new Proxy(NativeTransport, {
           construct(Target, argumentsList, NewTarget) {
             record(kind, { url: urlText(argumentsList[0]) });
-            if (blockEffects) throw new DOMException(`${label} blocked by replicate-websites.`, 'SecurityError');
+            if (blockEffects) throw new DOMException(`${label} blocked by pixel-by-pixel.`, 'SecurityError');
             return Reflect.construct(Target, argumentsList, NewTarget);
           }
         })
@@ -161,7 +161,7 @@ export function runtimeAttemptInitScript({ blockEffects }) {
             negotiated: options?.negotiated === true,
             protocolPresent: urlText(options?.protocol).length > 0
           });
-          if (blockEffects) throw new DOMException('RTC data channel blocked by replicate-websites.', 'SecurityError');
+          if (blockEffects) throw new DOMException('RTC data channel blocked by pixel-by-pixel.', 'SecurityError');
           return nativeCreateDataChannel.call(this, label, options);
         }
       });
@@ -182,7 +182,7 @@ export function runtimeAttemptInitScript({ blockEffects }) {
               configurationPresent: configuration !== undefined && configuration !== null,
               iceServerCount: Array.isArray(configuration?.iceServers) ? configuration.iceServers.length : 0
             });
-            if (blockEffects) throw new DOMException('RTCPeerConnection blocked by replicate-websites.', 'SecurityError');
+            if (blockEffects) throw new DOMException('RTCPeerConnection blocked by pixel-by-pixel.', 'SecurityError');
             return Reflect.construct(Target, argumentsList, NewTarget);
           }
         })
@@ -202,7 +202,7 @@ export function runtimeAttemptInitScript({ blockEffects }) {
             scope: urlText(options?.scope)
           });
           if (blockEffects) {
-            return Promise.reject(new DOMException('Service-worker registration blocked by replicate-websites.', 'SecurityError'));
+            return Promise.reject(new DOMException('Service-worker registration blocked by pixel-by-pixel.', 'SecurityError'));
           }
           return nativeRegister(scriptURL, options);
         }

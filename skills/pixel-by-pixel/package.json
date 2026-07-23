@@ -1,5 +1,5 @@
 {
-  "name": "@l4a-ai/replicate-websites-skill",
+  "name": "@l4a-ai/pixel-by-pixel-skill",
   "version": "0.2.0",
   "private": true,
   "type": "module",
@@ -8,9 +8,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/L4A-ai/replicate-websites.git",
-    "directory": "skills/replicate-websites"
+    "directory": "skills/pixel-by-pixel"
   },
-  "homepage": "https://github.com/L4A-ai/replicate-websites/tree/main/skills/replicate-websites",
+  "homepage": "https://github.com/L4A-ai/replicate-websites/tree/main/skills/pixel-by-pixel",
   "keywords": [
     "agent-skill",
     "playwright",

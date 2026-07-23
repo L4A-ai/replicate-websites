@@ -19,8 +19,8 @@ import {
   validateIsolationAttestation,
   validateStartCommand
 } from '../scripts/run-case.mjs';
-import { startTrustedBackend } from '../../skills/replicate-websites/scripts/lib/trusted-backend-process.mjs';
-import { verifyTrustedBackend } from '../../skills/replicate-websites/scripts/lib/trusted-backend.mjs';
+import { startTrustedBackend } from '../../skills/pixel-by-pixel/scripts/lib/trusted-backend-process.mjs';
+import { verifyTrustedBackend } from '../../skills/pixel-by-pixel/scripts/lib/trusted-backend.mjs';
 
 const execFileAsync = promisify(execFile);
 const syntheticGitSha = '1'.repeat(40);
@@ -56,7 +56,7 @@ async function createTestAttestation(paths, options) {
       gitSha,
       repositoryClean: true,
       headMatchedRequestedSha: true,
-      trackedSkillPath: 'skills/replicate-websites',
+      trackedSkillPath: 'skills/pixel-by-pixel',
       trackedSkillMatched: true,
       trackedSkillFileCount: skill.fileCount,
       trackedSkillSha256: skill.sha256
@@ -398,13 +398,13 @@ test('evaluator launches verified staged bytes after candidate replacement and r
   const root = await fs.mkdtemp(join(tmpdir(), 'replicate-evaluator-staged-runtime-'));
   const candidate = join(root, 'candidate');
   const sentinel = join(root, 'candidate-process-ran.txt');
-  const skillRoot = new URL('../../skills/replicate-websites/', import.meta.url).pathname;
+  const skillRoot = new URL('../../skills/pixel-by-pixel/', import.meta.url).pathname;
   const stagingEntries = async () => new Set((await fs.readdir(tmpdir()))
     .filter((name) => name.startsWith('replicate-audited-backend-')));
   let launched;
   try {
     await execFileAsync(process.execPath, [
-      new URL('../../skills/replicate-websites/scripts/scaffold-replica.mjs', import.meta.url).pathname,
+      new URL('../../skills/pixel-by-pixel/scripts/scaffold-replica.mjs', import.meta.url).pathname,
       '--out', candidate,
       '--name', 'evaluator-staged-runtime'
     ]);

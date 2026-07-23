@@ -1,9 +1,9 @@
 {
-  "name": "replicate-websites-skill-repository",
+  "name": "pixel-by-pixel-skill-repository",
   "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "GitHub distribution and clean-slate evaluation harness for the Replicate Websites Agent Skill.",
+  "description": "GitHub distribution and clean-slate evaluation harness for the Pixel by Pixel Agent Skill.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "website-replication"
   ],
   "workspaces": [
-    "skills/replicate-websites"
+    "skills/pixel-by-pixel"
   ],
   "scripts": {
     "test": "node --test test/skill/*.test.mjs",

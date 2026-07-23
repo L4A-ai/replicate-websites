@@ -1,17 +1,20 @@
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![skills.sh](https://skills.sh/b/l4a-ai/replicate-websites)](https://skills.sh/l4a-ai/replicate-websites)
+[![skills.sh](https://skills.sh/b/l4a-ai/replicate-websites)](https://skills.sh/l4a-ai/replicate-websites/pixel-by-pixel)
 
-# replicate-websites
+# Pixel by Pixel
 
-`replicate-websites` is a portable Agent Skill for rebuilding authorized webpages and proving
-frontend fidelity with deterministic Playwright captures, semantic contracts, accessibility
-checks, interaction tests, and pixel-by-pixel comparison.
+**Pixel by Pixel** (`pixel-by-pixel`) is a portable Agent Skill for rebuilding authorized webpages
+and proving frontend fidelity with deterministic Playwright captures, semantic contracts,
+accessibility checks, interaction tests, and pixel-by-pixel comparison.
 
 The repository exposes one canonical skill at
-[`skills/replicate-websites`](skills/replicate-websites). It works with Claude Code, Codex, and
+[`skills/pixel-by-pixel`](skills/pixel-by-pixel). It works with Claude Code, Codex, and
 other agents that support the open Agent Skills layout; no agent-specific copy of the instructions
 is maintained.
+
+> Renamed from `replicate-websites`: reinstall with `--skill pixel-by-pixel`, then remove the old
+> installed skill directory so agents do not discover two copies.
 
 ## What it includes
 
@@ -39,7 +42,7 @@ workflow used by other portable Agent Skill repositories:
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --copy
 ```
 
@@ -47,7 +50,7 @@ The installer detects supported agents and prints the destination. Point `SKILL_
 directory, then install and verify the runtime:
 
 ```bash
-SKILL_DIR=/absolute/path/to/replicate-websites
+SKILL_DIR=/absolute/path/to/pixel-by-pixel
 npm --prefix "$SKILL_DIR" run setup
 npm --prefix "$SKILL_DIR" run doctor
 ```
@@ -62,25 +65,25 @@ Project install:
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent codex \
   --copy \
   -y
 
-npm --prefix .agents/skills/replicate-websites run setup
+npm --prefix .agents/skills/pixel-by-pixel run setup
 ```
 
 User install:
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent codex \
   --global \
   --copy \
   -y
 
-npm --prefix ~/.agents/skills/replicate-websites run setup
+npm --prefix ~/.agents/skills/pixel-by-pixel run setup
 ```
 
 Codex discovers project skills in `.agents/skills` and user skills in `~/.agents/skills`.
@@ -91,25 +94,25 @@ Project install:
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent claude-code \
   --copy \
   -y
 
-npm --prefix .claude/skills/replicate-websites run setup
+npm --prefix .claude/skills/pixel-by-pixel run setup
 ```
 
 User install:
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent claude-code \
   --global \
   --copy \
   -y
 
-npm --prefix ~/.claude/skills/replicate-websites run setup
+npm --prefix ~/.claude/skills/pixel-by-pixel run setup
 ```
 
 ### Multiple or other agents
@@ -118,7 +121,7 @@ Repeat `--agent` to install the same canonical skill for more than one agent:
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent codex \
   --agent claude-code \
   --copy \
@@ -127,25 +130,25 @@ npx skills add L4A-ai/replicate-websites \
 
 For another supported agent, omit `--agent` and choose interactively, or pass an identifier
 supported by the installer. For a custom agent that reads a skills directory, copy
-`skills/replicate-websites` into that directory and run `npm run setup` inside the copy.
+`skills/pixel-by-pixel` into that directory and run `npm run setup` inside the copy.
 
 ## Use the skill
 
-Ask the agent to use `replicate-websites` and provide the authorized target URL, output directory,
+Ask the agent to use `pixel-by-pixel` and provide the authorized target URL, output directory,
 and required deployment mode. For agents with explicit skill invocation, a prompt can begin with:
 
 ```text
-Use $replicate-websites to recreate this authorized webpage in an empty local workspace.
+Use $pixel-by-pixel to recreate this authorized webpage in an empty local workspace.
 Keep the source GET-only, compare all four default viewports, and run the integrity gates.
 ```
 
-Read [`SKILL.md`](skills/replicate-websites/SKILL.md) for the complete capture, implementation,
+Read [`SKILL.md`](skills/pixel-by-pixel/SKILL.md) for the complete capture, implementation,
 comparison, diagnosis, interaction, and release workflow.
 
 The core scripts can also be run directly:
 
 ```bash
-SKILL_DIR=/absolute/path/to/replicate-websites
+SKILL_DIR=/absolute/path/to/pixel-by-pixel
 
 node "$SKILL_DIR/scripts/compare-pages.mjs" \
   --baseline https://example.com/authorized-page \
@@ -168,7 +171,7 @@ The default viewport set is desktop `1440x1000`, tablet `768x1024`, mobile `390x
   implemented and explicitly enabled.
 
 See
-[`safety-and-provenance.md`](skills/replicate-websites/references/safety-and-provenance.md) for the
+[`safety-and-provenance.md`](skills/pixel-by-pixel/references/safety-and-provenance.md) for the
 full boundary.
 
 ## Develop and validate
@@ -187,7 +190,7 @@ Repository layout:
 
 | Path | Purpose |
 |---|---|
-| `skills/replicate-websites/` | The only distributable Agent Skill |
+| `skills/pixel-by-pixel/` | The only distributable Agent Skill |
 | `test/skill/` | Repository-owned runtime and browser tests |
 | `evals/` | Clean-slate evaluator, policies, schemas, and contributor documentation |
 | `.github/workflows/skill-ci.yml` | Validation, discovery, package, and hash checks |

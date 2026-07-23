@@ -12,7 +12,7 @@ import {
 const skillDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 function usage() {
-  return `Install or verify the replicate-websites runtime.
+  return `Install or verify the pixel-by-pixel runtime.
 
 Usage:
   npm run setup

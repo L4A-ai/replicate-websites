@@ -2026,7 +2026,7 @@ async function captureViewport(browser, options, viewport) {
         return root;
       }
     });
-    const blocked = () => { throw new Error('Live form submission blocked by replicate-websites.'); };
+    const blocked = () => { throw new Error('Live form submission blocked by pixel-by-pixel.'); };
     try { HTMLFormElement.prototype.submit = blocked; } catch {}
     try { HTMLFormElement.prototype.requestSubmit = blocked; } catch {}
   });

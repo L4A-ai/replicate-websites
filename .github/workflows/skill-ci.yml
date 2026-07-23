@@ -27,5 +27,5 @@ jobs:
           fi
       - run: npm run validate
       - run: npm run check:install
-      - run: npm pack --workspace @l4a-ai/replicate-websites-skill --dry-run --json
+      - run: npm pack --workspace @l4a-ai/pixel-by-pixel-skill --dry-run --json
       - run: node evals/scripts/hash-skill.mjs

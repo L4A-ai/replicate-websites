@@ -11,10 +11,10 @@ import { promisify } from 'node:util';
 import test from 'node:test';
 import {
   createValidatingBrowserProxy
-} from '../../skills/replicate-websites/scripts/lib/validating-proxy.mjs';
+} from '../../skills/pixel-by-pixel/scripts/lib/validating-proxy.mjs';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/pixel-by-pixel');
 
 async function listen(server) {
   await new Promise((resolveListen, rejectListen) => {

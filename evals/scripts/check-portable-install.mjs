@@ -41,7 +41,7 @@ async function requireAbsent(pathname) {
 }
 
 async function main() {
-  const installRoot = await fs.mkdtemp(join(tmpdir(), 'replicate-websites-install-'));
+  const installRoot = await fs.mkdtemp(join(tmpdir(), 'pixel-by-pixel-install-'));
   try {
     const npx = process.platform === 'win32' ? 'npx.cmd' : 'npx';
     const install = run(npx, [
@@ -50,7 +50,7 @@ async function main() {
       'add',
       repositoryRoot,
       '--skill',
-      'replicate-websites',
+      'pixel-by-pixel',
       '--agent',
       'codex',
       '--agent',
@@ -67,8 +67,8 @@ async function main() {
     }
 
     const installs = [
-      join(installRoot, '.agents', 'skills', 'replicate-websites'),
-      join(installRoot, '.claude', 'skills', 'replicate-websites')
+      join(installRoot, '.agents', 'skills', 'pixel-by-pixel'),
+      join(installRoot, '.claude', 'skills', 'pixel-by-pixel')
     ];
     for (const skillRoot of installs) {
       await requireFile(join(skillRoot, 'SKILL.md'));

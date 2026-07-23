@@ -11,7 +11,7 @@ function resolverRoot(pathname) {
 
 function packageSearchRoots() {
   const roots = [process.cwd()];
-  for (const variable of ['REPLICATE_WEBSITES_NODE_MODULES', 'NODE_PATH']) {
+  for (const variable of ['PIXEL_BY_PIXEL_NODE_MODULES', 'REPLICATE_WEBSITES_NODE_MODULES', 'NODE_PATH']) {
     for (const entry of String(process.env[variable] || '').split(delimiter).filter(Boolean)) {
       roots.push(resolverRoot(entry));
     }
@@ -27,14 +27,14 @@ export function resolveRuntimePackage(name) {
   }
   for (const root of packageSearchRoots()) {
     try {
-      return createRequire(join(root, '__replicate_websites_runtime_resolver.cjs')).resolve(name);
+      return createRequire(join(root, '__pixel_by_pixel_runtime_resolver.cjs')).resolve(name);
     } catch {
       // Continue to the next explicit package root.
     }
   }
   throw new Error(
-    `Cannot resolve ${name}. Run npm run setup in the replicate-websites skill directory, `
-    + 'or set REPLICATE_WEBSITES_NODE_MODULES.'
+    `Cannot resolve ${name}. Run npm run setup in the pixel-by-pixel skill directory, `
+    + 'or set PIXEL_BY_PIXEL_NODE_MODULES (legacy: REPLICATE_WEBSITES_NODE_MODULES).'
   );
 }
 

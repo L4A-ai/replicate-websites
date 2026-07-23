@@ -10,10 +10,10 @@ import test from 'node:test';
 import {
   bootstrapSourceProvenance,
   publicResourceDescriptor
-} from '../../skills/replicate-websites/scripts/bootstrap-static-replica.mjs';
+} from '../../skills/pixel-by-pixel/scripts/bootstrap-static-replica.mjs';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/pixel-by-pixel');
 const script = (name) => join(skillRoot, 'scripts', name);
 const liveToken = 'LIVE_PROVIDER_TOKEN_DO_NOT_COPY_7f236af6c1164a11a9';
 const liveLinkToken = 'LIVE_SIGNED_LINK_DO_NOT_COPY_9405d572692f4f09b0';
