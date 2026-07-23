@@ -6,7 +6,7 @@ import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const skillRoot = resolve(process.argv[2] || join(repositoryRoot, 'skills/replicate-websites'));
+const skillRoot = resolve(process.argv[2] || join(repositoryRoot, 'skills/pixel-by-pixel'));
 
 async function collect(directory) {
   const files = [];

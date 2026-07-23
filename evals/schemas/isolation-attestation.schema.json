@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://l4a.ai/schemas/replicate-websites-isolation-attestation-v2.json",
-  "title": "Replicate Websites pre-dispatch isolation attestation",
+  "title": "Pixel by Pixel pre-dispatch isolation attestation",
   "type": "object",
   "required": [
     "schemaVersion", "recordedAt", "phase", "runId", "caseId", "workspace",
@@ -50,7 +50,7 @@
         "gitSha": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
         "repositoryClean": { "const": true },
         "headMatchedRequestedSha": { "const": true },
-        "trackedSkillPath": { "const": "skills/replicate-websites" },
+        "trackedSkillPath": { "const": "skills/pixel-by-pixel" },
         "trackedSkillMatched": { "const": true },
         "trackedSkillFileCount": { "type": "integer", "minimum": 1 },
         "trackedSkillSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }

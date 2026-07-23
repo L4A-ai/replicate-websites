@@ -8,9 +8,9 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const defaultSkill = join(repositoryRoot, 'skills/replicate-websites');
+const defaultSkill = join(repositoryRoot, 'skills/pixel-by-pixel');
 const defaultPrompt = join(repositoryRoot, 'evals/prompt.txt');
-const trackedSkillPath = 'skills/replicate-websites';
+const trackedSkillPath = 'skills/pixel-by-pixel';
 const gitShaPattern = /^[a-f0-9]{40}$/;
 const promptByteLimit = 64 * 1024;
 const execFileAsync = promisify(execFile);

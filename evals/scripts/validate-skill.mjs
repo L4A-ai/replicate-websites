@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
 function parseArguments(argv) {
-  const options = { skillRoot: join(repositoryRoot, 'skills/replicate-websites'), help: false };
+  const options = { skillRoot: join(repositoryRoot, 'skills/pixel-by-pixel'), help: false };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === '--skill') {

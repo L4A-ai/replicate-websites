@@ -1,7 +1,7 @@
 # replicate-websites
 
-Portable Agent Skill for reconstructing authorized webpages and measuring full-page visual,
-layout, form, interaction, and accessibility fidelity.
+Home of the Pixel by Pixel Agent Skill for reconstructing authorized webpages and measuring
+full-page visual, layout, form, interaction, and accessibility fidelity.
 
 ## Hard rules
 
@@ -13,7 +13,7 @@ layout, form, interaction, and accessibility fidelity.
   Commit only the reusable skill, scripts, references, synthetic fixtures, and aggregate eval evidence.
 - Treat `SKILL.md` as the workflow source of truth. Keep it concise and route detailed guidance to
   one-level `references/` files.
-- Keep exactly one distributable skill at `skills/replicate-websites`. Agent-specific adapters may
+- Keep exactly one distributable skill at `skills/pixel-by-pixel`. Agent-specific adapters may
   reference it, but must never duplicate its instructions.
 - Keep repository tests and evaluator internals outside the distributable skill directory.
 - Run the skill validator and script tests after every material workflow or tooling change.

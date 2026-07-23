@@ -26,7 +26,7 @@ causes improvement.
 ## Forward-test prompt
 
 ```text
-Use $replicate-websites at SKILL_PATH to build a locally runnable visual and behavioral replica of
+Use $pixel-by-pixel at SKILL_PATH to build a locally runnable visual and behavioral replica of
 TARGET_URL in the empty WORKSPACE. Inspect the source read-only and never submit to it. For an
 application form, implement a synthetic same-origin backend and keep email disabled by default.
 Finish only after running the bundled audit at every required viewport. Emit replica.manifest.json.

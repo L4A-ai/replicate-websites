@@ -10,11 +10,11 @@ import { hashEvaluatorHarness, hashReadOnlySkill } from './init-case.mjs';
 import {
   assertSafeHttpUrl,
   redactReportData
-} from '../../skills/replicate-websites/scripts/lib/network-safety.mjs';
+} from '../../skills/pixel-by-pixel/scripts/lib/network-safety.mjs';
 
 const execFileAsync = promisify(execFile);
 const repositoryRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
-const defaultSkill = join(repositoryRoot, 'skills/replicate-websites');
+const defaultSkill = join(repositoryRoot, 'skills/pixel-by-pixel');
 const defaultViewports = ['desktop:1440x1000', 'tablet:768x1024', 'mobile:390x844', 'compact:360x800'];
 const targetsPath = join(repositoryRoot, 'evals/targets.json');
 const candidateJsonLimit = 1024 * 1024;
@@ -396,7 +396,7 @@ export async function validateIsolationAttestation(options) {
     || attestation.revision?.gitSha !== attestation.skill.gitSha
     || attestation.revision?.repositoryClean !== true
     || attestation.revision?.headMatchedRequestedSha !== true
-    || attestation.revision?.trackedSkillPath !== 'skills/replicate-websites'
+    || attestation.revision?.trackedSkillPath !== 'skills/pixel-by-pixel'
     || attestation.revision?.trackedSkillMatched !== true
     || attestation.revision?.trackedSkillFileCount !== skill.fileCount
     || attestation.revision?.trackedSkillSha256 !== skill.sha256) {

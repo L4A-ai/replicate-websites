@@ -1,15 +1,19 @@
 [English](README.md) | [简体中文](README.zh-CN.md)
 
-[![skills.sh](https://skills.sh/b/l4a-ai/replicate-websites)](https://skills.sh/l4a-ai/replicate-websites)
+[![skills.sh](https://skills.sh/b/l4a-ai/replicate-websites)](https://skills.sh/l4a-ai/replicate-websites/pixel-by-pixel)
 
-# replicate-websites
+# Pixel by Pixel
 
-`replicate-websites` 是一个可移植的 Agent Skill，用于重建已获授权的网页，并通过确定性的
-Playwright 截图、语义契约、无障碍检查、交互测试和逐像素比较来验证前端保真度。
+**Pixel by Pixel**（`pixel-by-pixel`）是一个可移植的 Agent Skill，用于重建已获授权的
+网页，并通过确定性的 Playwright 截图、语义契约、无障碍检查、交互测试和逐像素比较来
+验证前端保真度。
 
 仓库只维护一个规范技能：
-[`skills/replicate-websites`](skills/replicate-websites)。它适用于 Claude Code、Codex
+[`skills/pixel-by-pixel`](skills/pixel-by-pixel)。它适用于 Claude Code、Codex
 以及其他支持开放 Agent Skills 目录结构的智能体，不会为不同智能体复制多份技能说明。
+
+> 本技能原名为 `replicate-websites`：请使用 `--skill pixel-by-pixel` 重新安装，然后删除
+> 旧的技能安装目录，避免智能体同时发现两个副本。
 
 ## 功能
 
@@ -37,7 +41,7 @@ npm 运行时和 Chromium。
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --copy
 ```
 
@@ -45,7 +49,7 @@ npx skills add L4A-ai/replicate-websites \
 运行时：
 
 ```bash
-SKILL_DIR=/absolute/path/to/replicate-websites
+SKILL_DIR=/absolute/path/to/pixel-by-pixel
 npm --prefix "$SKILL_DIR" run setup
 npm --prefix "$SKILL_DIR" run doctor
 ```
@@ -59,25 +63,25 @@ npm --prefix "$SKILL_DIR" run doctor
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent codex \
   --copy \
   -y
 
-npm --prefix .agents/skills/replicate-websites run setup
+npm --prefix .agents/skills/pixel-by-pixel run setup
 ```
 
 用户级安装：
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent codex \
   --global \
   --copy \
   -y
 
-npm --prefix ~/.agents/skills/replicate-websites run setup
+npm --prefix ~/.agents/skills/pixel-by-pixel run setup
 ```
 
 Codex 会从项目的 `.agents/skills` 和用户目录的 `~/.agents/skills` 中发现技能。
@@ -88,25 +92,25 @@ Codex 会从项目的 `.agents/skills` 和用户目录的 `~/.agents/skills` 中
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent claude-code \
   --copy \
   -y
 
-npm --prefix .claude/skills/replicate-websites run setup
+npm --prefix .claude/skills/pixel-by-pixel run setup
 ```
 
 用户级安装：
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent claude-code \
   --global \
   --copy \
   -y
 
-npm --prefix ~/.claude/skills/replicate-websites run setup
+npm --prefix ~/.claude/skills/pixel-by-pixel run setup
 ```
 
 ### 多个或其他智能体
@@ -115,7 +119,7 @@ npm --prefix ~/.claude/skills/replicate-websites run setup
 
 ```bash
 npx skills add L4A-ai/replicate-websites \
-  --skill replicate-websites \
+  --skill pixel-by-pixel \
   --agent codex \
   --agent claude-code \
   --copy \
@@ -123,26 +127,26 @@ npx skills add L4A-ai/replicate-websites \
 ```
 
 对于其他受支持的智能体，可以省略 `--agent` 后交互选择，也可以传入安装器支持的智能体
-标识。对于能读取自定义技能目录的智能体，将 `skills/replicate-websites`
+标识。对于能读取自定义技能目录的智能体，将 `skills/pixel-by-pixel`
 复制到其技能目录，再在副本中运行 `npm run setup`。
 
 ## 使用技能
 
-要求智能体使用 `replicate-websites`，并提供已获授权的目标 URL、输出目录和部署模式。
+要求智能体使用 `pixel-by-pixel`，并提供已获授权的目标 URL、输出目录和部署模式。
 对于支持显式技能调用的智能体，可以使用如下提示词：
 
 ```text
-Use $replicate-websites to recreate this authorized webpage in an empty local workspace.
+Use $pixel-by-pixel to recreate this authorized webpage in an empty local workspace.
 Keep the source GET-only, compare all four default viewports, and run the integrity gates.
 ```
 
 完整的采集、实现、比较、诊断、交互和发布流程请参阅
-[`SKILL.md`](skills/replicate-websites/SKILL.md)。
+[`SKILL.md`](skills/pixel-by-pixel/SKILL.md)。
 
 也可以直接运行核心脚本：
 
 ```bash
-SKILL_DIR=/absolute/path/to/replicate-websites
+SKILL_DIR=/absolute/path/to/pixel-by-pixel
 
 node "$SKILL_DIR/scripts/compare-pages.mjs" \
   --baseline https://example.com/authorized-page \
@@ -163,7 +167,7 @@ node "$SKILL_DIR/scripts/compare-pages.mjs" \
 - 申请人字段和上传文件只能短暂存在；除非另行实现并明确启用，否则邮件功能保持关闭。
 
 完整说明请参阅
-[`safety-and-provenance.md`](skills/replicate-websites/references/safety-and-provenance.md)。
+[`safety-and-provenance.md`](skills/pixel-by-pixel/references/safety-and-provenance.md)。
 
 ## 开发与验证
 
@@ -181,7 +185,7 @@ node evals/scripts/hash-skill.mjs
 
 | 路径 | 用途 |
 |---|---|
-| `skills/replicate-websites/` | 唯一可分发的 Agent Skill |
+| `skills/pixel-by-pixel/` | 唯一可分发的 Agent Skill |
 | `test/skill/` | 仓库自有的运行时和浏览器测试 |
 | `evals/` | 洁净环境评测器、策略、模式和贡献者文档 |
 | `.github/workflows/skill-ci.yml` | 验证、发现、打包和哈希检查 |

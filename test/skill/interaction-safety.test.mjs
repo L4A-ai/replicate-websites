@@ -6,10 +6,10 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
-import { verifyTrustedBackend } from '../../skills/replicate-websites/scripts/lib/trusted-backend.mjs';
+import { verifyTrustedBackend } from '../../skills/pixel-by-pixel/scripts/lib/trusted-backend.mjs';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/pixel-by-pixel');
 const interactionScript = join(skillRoot, 'scripts', 'test-application-flow.mjs');
 const scaffoldScript = join(skillRoot, 'scripts', 'scaffold-replica.mjs');
 

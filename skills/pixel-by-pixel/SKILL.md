@@ -1,9 +1,9 @@
 ---
-name: replicate-websites
+name: pixel-by-pixel
 description: Replicate authorized or public webpages into local or deployable implementations with measured pixel, responsive, semantic, accessibility, interaction, and backend fidelity. Use when asked to clone, mock, recreate, reproduce, or visually match a webpage from a URL; build an ATS or job-application simulation; diagnose screenshot or form-label discrepancies; or iterate a frontend toward pixel-perfect equivalence across desktop and mobile.
 ---
 
-# Replicate Websites
+# Pixel by Pixel
 
 Reconstruct the rendered interface and its safe local behavior from evidence. Treat pixels,
 geometry, semantics, accessibility, responsive states, and interactions as independent gates.
@@ -21,7 +21,7 @@ geometry, semantics, accessibility, responsive states, and interactions as indep
 Set the installed skill directory once:
 
 ```bash
-SKILL_DIR=/absolute/path/to/replicate-websites
+SKILL_DIR=/absolute/path/to/pixel-by-pixel
 ```
 
 After installing the skill, run `npm run setup` inside `SKILL_DIR` once. This installs the pinned

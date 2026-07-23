@@ -12,7 +12,7 @@ import { PNG } from 'pngjs';
 import {
   cssDependencyReferer,
   fetchCssDependency
-} from '../../skills/replicate-websites/scripts/bootstrap-static-replica.mjs';
+} from '../../skills/pixel-by-pixel/scripts/bootstrap-static-replica.mjs';
 import {
   assertSafeHttpUrl,
   blocksPrivateDestination,
@@ -23,10 +23,10 @@ import {
   isPrivateOrReservedAddress,
   redactReportData,
   redactSensitiveUrl
-} from '../../skills/replicate-websites/scripts/lib/network-safety.mjs';
+} from '../../skills/pixel-by-pixel/scripts/lib/network-safety.mjs';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/pixel-by-pixel');
 const repositoryRoot = resolve(skillRoot, '../..');
 const script = (name) => join(skillRoot, 'scripts', name);
 const bundledStarterAppSha256 = createHash('sha256')

@@ -521,7 +521,7 @@ async function main() {
   } catch (error) {
     if (error.code !== 'ENOENT') throw error;
   }
-  const outputDirectory = await fs.mkdtemp(join(outputParent, '.replicate-websites-staging-'));
+  const outputDirectory = await fs.mkdtemp(join(outputParent, '.pixel-by-pixel-staging-'));
   try {
     await execFileAsync(process.execPath, [
       join(skillDirectory, 'scripts', 'scaffold-replica.mjs'),

@@ -839,7 +839,7 @@ async function captureSide(browser, side, url, viewport, directory, options) {
 
   if (!allowSideWrites) {
     await page.addInitScript(() => {
-      const blockSubmit = () => { throw new Error('Live form submission blocked by replicate-websites.'); };
+      const blockSubmit = () => { throw new Error('Live form submission blocked by pixel-by-pixel.'); };
       try { HTMLFormElement.prototype.submit = blockSubmit; } catch {}
       try { HTMLFormElement.prototype.requestSubmit = blockSubmit; } catch {}
     });
