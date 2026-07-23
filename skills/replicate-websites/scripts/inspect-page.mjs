@@ -1,10 +1,8 @@
 #!/usr/bin/env node
 
 import { createHash } from 'node:crypto';
-import { createRequire } from 'node:module';
 import { promises as fs } from 'node:fs';
-import { homedir } from 'node:os';
-import { delimiter, dirname, join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   assertSafeHttpUrl,
@@ -20,6 +18,10 @@ import {
   runtimeAttemptInitScript
 } from './lib/runtime-attempts.mjs';
 import { integrityNativeInitScript } from './lib/integrity-natives.mjs';
+import {
+  findChromiumExecutable,
+  resolveRuntimePackage
+} from './lib/runtime-dependencies.mjs';
 import { createValidatingBrowserProxy } from './lib/validating-proxy.mjs';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
@@ -204,82 +206,6 @@ function summarizeMainResponseSecurityHeaders(response) {
       hasUrlDirective: /(?:^|;)\s*url\s*=/i.test(refresh)
     }
   };
-}
-
-function packageSearchRoots() {
-  const roots = [skillDirectory, process.cwd()];
-  if (process.env.CODEX_NODE_MODULES) roots.push(dirname(resolve(process.env.CODEX_NODE_MODULES)));
-  if (process.env.NODE_PATH) {
-    for (const entry of process.env.NODE_PATH.split(delimiter).filter(Boolean)) roots.push(dirname(resolve(entry)));
-  }
-  roots.push(join(homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node'));
-  return [...new Set(roots)];
-}
-
-function resolvePackage(name) {
-  try {
-    return createRequire(import.meta.url).resolve(name);
-  } catch {
-    // Search the skill, caller, then the bundled Codex runtime.
-  }
-  for (const root of packageSearchRoots()) {
-    try {
-      return createRequire(join(root, '__replica_inspector_resolver.cjs')).resolve(name);
-    } catch {
-      // Continue.
-    }
-  }
-  throw new Error(`Cannot resolve ${name}. Run npm install in the skill repository.`);
-}
-
-async function existingFile(pathname) {
-  if (!pathname) return null;
-  try {
-    await fs.access(pathname);
-    return pathname;
-  } catch {
-    return null;
-  }
-}
-
-async function findChromiumExecutable(chromium) {
-  const explicit = await existingFile(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH);
-  if (explicit) return explicit;
-  const packaged = await existingFile(chromium.executablePath());
-  if (packaged) return packaged;
-  const agentBrowserRoot = join(homedir(), '.agent-browser', 'browsers');
-  try {
-    const versions = (await fs.readdir(agentBrowserRoot, { withFileTypes: true }))
-      .filter((entry) => entry.isDirectory() && entry.name.startsWith('chrome-'))
-      .map((entry) => entry.name)
-      .sort()
-      .reverse();
-    for (const version of versions) {
-      const macCandidate = await existingFile(join(agentBrowserRoot, version, 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing'));
-      if (macCandidate) return macCandidate;
-      const linuxCandidate = await existingFile(join(agentBrowserRoot, version, 'chrome'));
-      if (linuxCandidate) return linuxCandidate;
-    }
-  } catch {
-    // Agent Browser is optional.
-  }
-  const candidates = process.platform === 'darwin'
-    ? [
-        '/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
-        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-        '/Applications/Chromium.app/Contents/MacOS/Chromium'
-      ]
-    : process.platform === 'win32'
-      ? [
-          join(process.env.PROGRAMFILES || 'C:\\Program Files', 'Google', 'Chrome', 'Application', 'chrome.exe'),
-          join(process.env['PROGRAMFILES(X86)'] || 'C:\\Program Files (x86)', 'Google', 'Chrome', 'Application', 'chrome.exe')
-        ]
-      : ['/usr/bin/google-chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium', '/usr/bin/chromium-browser'];
-  for (const candidate of candidates) {
-    const found = await existingFile(candidate);
-    if (found) return found;
-  }
-  return null;
 }
 
 async function settlePage(page, options, warnings) {
@@ -1780,15 +1706,17 @@ async function capturePublicDisclosureMediaMatrix(page, context, viewport, reque
   try {
     for (const variant of publicDisclosureMediaVariants) {
       try {
-        await page.emulateMedia({
-          colorScheme: variant.colorScheme,
-          reducedMotion: variant.reducedMotion
-        });
         await cdp.send('Emulation.setDeviceMetricsOverride', {
           width: viewport.width,
           height: viewport.height,
           deviceScaleFactor: variant.deviceScaleFactor,
           mobile: false
+        });
+        // Chromium can defer resolution-media style invalidation until another media emulation
+        // change. Apply color/motion after the DPR override so computed styles see all three.
+        await page.emulateMedia({
+          colorScheme: variant.colorScheme,
+          reducedMotion: variant.reducedMotion
         });
         const quiescence = await waitForExecutableStyleQuiescence(
           page,
@@ -2559,7 +2487,7 @@ async function main() {
     .update(await fs.readFile(bundledStarterAppPath))
     .digest('hex');
   await fs.mkdir(options.out, { recursive: true });
-  const playwrightModule = await import(pathToFileURL(resolvePackage('playwright')).href);
+  const playwrightModule = await import(pathToFileURL(resolveRuntimePackage('playwright')).href);
   const chromium = playwrightModule.chromium || playwrightModule.default?.chromium;
   if (!chromium) throw new Error('Resolved Playwright package does not expose Chromium.');
   const executablePath = await findChromiumExecutable(chromium);

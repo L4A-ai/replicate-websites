@@ -2,9 +2,7 @@
 
 import { createHash } from 'node:crypto';
 import { promises as fs } from 'node:fs';
-import { createRequire } from 'node:module';
-import { homedir } from 'node:os';
-import { delimiter, dirname, join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
   assertSafeHttpUrl,
@@ -18,6 +16,10 @@ import {
   runtimeAttemptInitScript
 } from './lib/runtime-attempts.mjs';
 import { integrityNativeInitScript } from './lib/integrity-natives.mjs';
+import {
+  findChromiumExecutable,
+  resolveRuntimePackage
+} from './lib/runtime-dependencies.mjs';
 import { createValidatingBrowserProxy } from './lib/validating-proxy.mjs';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
@@ -159,96 +161,17 @@ function parseArguments(argv) {
   return options;
 }
 
-function packageSearchRoots() {
-  const roots = [skillDirectory, process.cwd()];
-  if (process.env.CODEX_NODE_MODULES) roots.push(dirname(resolve(process.env.CODEX_NODE_MODULES)));
-  if (process.env.NODE_PATH) {
-    for (const entry of process.env.NODE_PATH.split(delimiter).filter(Boolean)) roots.push(dirname(resolve(entry)));
-  }
-  roots.push(join(homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node'));
-  return [...new Set(roots)];
-}
-
-function resolvePackage(name) {
-  const direct = createRequire(import.meta.url);
-  try {
-    return direct.resolve(name);
-  } catch {
-    // Search the skill, current project, an explicit runtime, then Codex's bundled runtime.
-  }
-  for (const root of packageSearchRoots()) {
-    try {
-      return createRequire(join(root, '__webpage_fidelity_resolver.cjs')).resolve(name);
-    } catch {
-      // Continue to the next deterministic package root.
-    }
-  }
-  throw new Error(`Cannot resolve ${name}. Install playwright, pixelmatch, and pngjs, or set CODEX_NODE_MODULES.`);
-}
-
 async function loadDependencies() {
   const [playwrightModule, pixelmatchModule, pngModule] = await Promise.all([
-    import(pathToFileURL(resolvePackage('playwright')).href),
-    import(pathToFileURL(resolvePackage('pixelmatch')).href),
-    import(pathToFileURL(resolvePackage('pngjs')).href)
+    import(pathToFileURL(resolveRuntimePackage('playwright')).href),
+    import(pathToFileURL(resolveRuntimePackage('pixelmatch')).href),
+    import(pathToFileURL(resolveRuntimePackage('pngjs')).href)
   ]);
   const chromium = playwrightModule.chromium || playwrightModule.default?.chromium;
   const pixelmatch = pixelmatchModule.default || pixelmatchModule;
   const PNG = pngModule.PNG || pngModule.default?.PNG;
   if (!chromium || typeof pixelmatch !== 'function' || !PNG) throw new Error('Resolved comparison dependencies have unexpected exports.');
   return { chromium, pixelmatch, PNG };
-}
-
-async function existingFile(pathname) {
-  if (!pathname) return null;
-  try {
-    await fs.access(pathname);
-    return pathname;
-  } catch {
-    return null;
-  }
-}
-
-async function findChromiumExecutable(chromium) {
-  const explicit = await existingFile(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH);
-  if (explicit) return explicit;
-  const packaged = await existingFile(chromium.executablePath());
-  if (packaged) return packaged;
-
-  const agentBrowserRoot = join(homedir(), '.agent-browser', 'browsers');
-  try {
-    const versions = (await fs.readdir(agentBrowserRoot, { withFileTypes: true }))
-      .filter((entry) => entry.isDirectory() && entry.name.startsWith('chrome-'))
-      .map((entry) => entry.name)
-      .sort()
-      .reverse();
-    for (const version of versions) {
-      const macCandidate = await existingFile(join(agentBrowserRoot, version, 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing'));
-      if (macCandidate) return macCandidate;
-      const linuxCandidate = await existingFile(join(agentBrowserRoot, version, 'chrome'));
-      if (linuxCandidate) return linuxCandidate;
-    }
-  } catch {
-    // Agent Browser is optional.
-  }
-
-  const systemCandidates = process.platform === 'darwin'
-    ? [
-        '/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing',
-        '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-        '/Applications/Chromium.app/Contents/MacOS/Chromium'
-      ]
-    : process.platform === 'win32'
-      ? [
-          join(process.env.PROGRAMFILES || 'C:\\Program Files', 'Google', 'Chrome', 'Application', 'chrome.exe'),
-          join(process.env['PROGRAMFILES(X86)'] || 'C:\\Program Files (x86)', 'Google', 'Chrome', 'Application', 'chrome.exe')
-        ]
-      : ['/usr/bin/google-chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium', '/usr/bin/chromium-browser'];
-  for (const candidate of systemCandidates) {
-    const found = await existingFile(candidate);
-    if (found) return found;
-  }
-  return null;
 }
 
 const normalizeText = (value) => String(value ?? '').replace(/\s+/g, ' ').trim();

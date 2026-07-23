@@ -1,4 +1,0 @@
-interface:
-  display_name: "Replicate Websites"
-  short_description: "Build and verify pixel-faithful website replicas"
-  default_prompt: "Use $replicate-websites to replicate this public website in a local or test deployment and verify it pixel by pixel."

@@ -20,5 +20,6 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npx playwright install --with-deps chromium
       - run: npm run validate
+      - run: npm run check:install
       - run: npm pack --workspace @l4a-ai/replicate-websites-skill --dry-run --json
       - run: node evals/scripts/hash-skill.mjs

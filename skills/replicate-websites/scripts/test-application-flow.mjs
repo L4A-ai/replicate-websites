@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 import { createHash } from 'node:crypto';
-import { createRequire } from 'node:module';
 import { promises as fs } from 'node:fs';
-import { homedir } from 'node:os';
 import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import {
@@ -16,6 +14,10 @@ import { verifyTrustedBackend } from './lib/trusted-backend.mjs';
 import { startTrustedBackend } from './lib/trusted-backend-process.mjs';
 import { createValidatingBrowserProxy } from './lib/validating-proxy.mjs';
 import { integrityNativeInitScript } from './lib/integrity-natives.mjs';
+import {
+  findChromiumExecutable,
+  resolveRuntimePackage
+} from './lib/runtime-dependencies.mjs';
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const skillDirectory = resolve(scriptDirectory, '..');
@@ -263,48 +265,6 @@ function validAuditShape(value) {
     && value.storedFileBytes === 0
     && value.outboxCount === 0
     && value.emailDispatchCount === 0;
-}
-
-function resolvePackage(name) {
-  const roots = [skillDirectory, process.cwd(), join(homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node')];
-  for (const root of roots) {
-    try { return createRequire(join(root, '__replica_interaction_resolver.cjs')).resolve(name); } catch {}
-  }
-  throw new Error(`Cannot resolve ${name}. Run npm install in the skill repository.`);
-}
-
-async function existingFile(pathname) {
-  if (!pathname) return null;
-  try { await fs.access(pathname); return pathname; } catch { return null; }
-}
-
-async function findChromiumExecutable(chromium) {
-  const explicit = await existingFile(process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH);
-  if (explicit) return explicit;
-  const packaged = await existingFile(chromium.executablePath());
-  if (packaged) return packaged;
-  const agentBrowserRoot = join(homedir(), '.agent-browser', 'browsers');
-  try {
-    const versions = (await fs.readdir(agentBrowserRoot, { withFileTypes: true }))
-      .filter((entry) => entry.isDirectory() && entry.name.startsWith('chrome-'))
-      .map((entry) => entry.name)
-      .sort()
-      .reverse();
-    for (const version of versions) {
-      const macCandidate = await existingFile(join(agentBrowserRoot, version, 'Google Chrome for Testing.app', 'Contents', 'MacOS', 'Google Chrome for Testing'));
-      if (macCandidate) return macCandidate;
-      const linuxCandidate = await existingFile(join(agentBrowserRoot, version, 'chrome'));
-      if (linuxCandidate) return linuxCandidate;
-    }
-  } catch {}
-  const candidates = process.platform === 'darwin'
-    ? ['/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome']
-    : ['/usr/bin/google-chrome', '/usr/bin/google-chrome-stable', '/usr/bin/chromium'];
-  for (const candidate of candidates) {
-    const found = await existingFile(candidate);
-    if (found) return found;
-  }
-  return null;
 }
 
 async function fillControl(control) {
@@ -872,7 +832,7 @@ async function main() {
     portSelection: runtime.evidence.portSelection,
     readinessChannel: runtime.evidence.readinessChannel
   };
-  const playwrightModule = await import(pathToFileURL(resolvePackage('playwright')).href);
+  const playwrightModule = await import(pathToFileURL(resolveRuntimePackage('playwright')).href);
   const chromium = playwrightModule.chromium || playwrightModule.default?.chromium;
   const executablePath = await findChromiumExecutable(chromium);
   transport = await createValidatingBrowserProxy({ allowedLoopbackUrl: candidate.href });

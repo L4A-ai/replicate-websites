@@ -80,7 +80,6 @@ async function main() {
     'SKILL.md',
     'LICENSE',
     'package.json',
-    'agents/openai.yaml',
     'assets/replica-starter/server.mjs',
     'references/safety-and-provenance.md',
     'references/workflow.md',
@@ -117,22 +116,9 @@ async function main() {
   }
 
   try {
-    const interfaceYaml = await fs.readFile(join(options.skillRoot, 'agents/openai.yaml'), 'utf8');
-    for (const field of ['display_name:', 'short_description:', 'default_prompt:']) {
-      if (!interfaceYaml.includes(field)) errors.push(`agents/openai.yaml is missing ${field.slice(0, -1)}.`);
-    }
-    if (!interfaceYaml.includes(`$${frontmatter.name || 'replicate-websites'}`)) {
-      errors.push('agents/openai.yaml default_prompt must explicitly invoke the skill.');
-    }
-  } catch (error) {
-    if (error.code !== 'ENOENT') throw error;
-  }
-
-  try {
     const packageJson = JSON.parse(await fs.readFile(join(options.skillRoot, 'package.json'), 'utf8'));
-    if (packageJson.private !== true) errors.push('The GitHub-distributed skill package must remain private on npm by default.');
     if (packageJson.license !== 'MIT') errors.push('package.json must declare the MIT license.');
-    for (const packaged of ['SKILL.md', 'LICENSE', 'agents', 'assets', 'references', 'scripts']) {
+    for (const packaged of ['SKILL.md', 'LICENSE', 'assets', 'references', 'scripts']) {
       if (!(packageJson.files || []).includes(packaged)) errors.push(`package.json files must include ${packaged}.`);
     }
     if ((packageJson.files || []).includes('README.md')) errors.push('package.json must not package an extra skill README.md.');

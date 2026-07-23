@@ -7,10 +7,13 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
-import { bootstrapSourceProvenance, publicResourceDescriptor } from '../scripts/bootstrap-static-replica.mjs';
+import {
+  bootstrapSourceProvenance,
+  publicResourceDescriptor
+} from '../../skills/replicate-websites/scripts/bootstrap-static-replica.mjs';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
 const script = (name) => join(skillRoot, 'scripts', name);
 const liveToken = 'LIVE_PROVIDER_TOKEN_DO_NOT_COPY_7f236af6c1164a11a9';
 const liveLinkToken = 'LIVE_SIGNED_LINK_DO_NOT_COPY_9405d572692f4f09b0';

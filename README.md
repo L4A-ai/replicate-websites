@@ -1,177 +1,199 @@
+[English](README.md) | [简体中文](README.zh-CN.md)
+
 # replicate-websites
 
-`replicate-websites` is a Codex skill and deterministic Playwright toolchain for rebuilding
-authorized webpages and proving visual fidelity across full-page desktop and mobile captures.
+`replicate-websites` is a portable Agent Skill for rebuilding authorized webpages and proving
+frontend fidelity with deterministic Playwright captures, semantic contracts, accessibility
+checks, interaction tests, and pixel-by-pixel comparison.
 
-It treats pixel output, dimensions, DOM semantics, accessibility, deterministic rendering,
-interaction behavior, and backend safety as separate release gates. Job application pages receive a
-same-origin synthetic submission service with non-retention and email disabled by default.
+The repository exposes one canonical skill at
+[`skills/replicate-websites`](skills/replicate-websites). It works with Claude Code, Codex, and
+other agents that support the open Agent Skills layout; no agent-specific copy of the instructions
+is maintained.
 
 ## What it includes
 
-- A sandboxed, GET-only rendered-DOM bootstrap for owned sites and private local evaluation
-- A dependency-free Node candidate service with explicit local, owned, and disclosed-simulation modes
-- Full-page strict and tolerant pixel comparison at named viewports
-- Rendered contracts for layout, typography, resources, controls, labels, forms, links, and AX nodes
-- Exact semantic-difference policies for deliberate safe-backend substitutions
-- Diff-band diagnosis, iteration ledgers, regression detection, and best-score checkpoints
-- Candidate integrity and synthetic application-flow audits
-- A clean-slate benchmark harness and contamination checks
+- Sandboxed, GET-only inspection of an authorized source page
+- Full-page strict and tolerant pixel comparison at four responsive viewports
+- DOM, typography, resource, control, form-label, link, and accessibility contracts
+- A safe static bootstrap and a dependency-free local candidate service
+- Candidate integrity checks and synthetic application-flow tests
+- A same-origin mock submission backend with non-retention and email disabled by default
+- Regression-aware fidelity loops, diff diagnosis, and clean-slate evaluation tooling
 
-## Install
+## Requirements
 
-Requirements: Node.js 20+ and Chromium.
+- Node.js 20 or newer
+- npm
+- macOS, Linux, or Windows
+
+The skill installer places the instructions and tools. A separate one-time setup command installs
+the pinned npm runtime and Chromium.
+
+## Install with the cross-agent installer
+
+The recommended installation follows the same [`skills`](https://github.com/vercel-labs/skills)
+workflow used by other portable Agent Skill repositories:
+
+```bash
+npx skills add L4A-ai/replicate-websites \
+  --skill replicate-websites \
+  --copy
+```
+
+The installer detects supported agents and prints the destination. Point `SKILL_DIR` at that
+directory, then install and verify the runtime:
+
+```bash
+SKILL_DIR=/absolute/path/to/replicate-websites
+npm --prefix "$SKILL_DIR" run setup
+npm --prefix "$SKILL_DIR" run doctor
+```
+
+`setup` installs `playwright`, `pixelmatch`, and `pngjs`, then downloads Chromium. It never installs
+a background service. `doctor` is read-only and reports whether Node, the packages, and a usable
+Chromium executable are present.
+
+### Codex
+
+Project install:
+
+```bash
+npx skills add L4A-ai/replicate-websites \
+  --skill replicate-websites \
+  --agent codex \
+  --copy \
+  -y
+
+npm --prefix .agents/skills/replicate-websites run setup
+```
+
+User install:
+
+```bash
+npx skills add L4A-ai/replicate-websites \
+  --skill replicate-websites \
+  --agent codex \
+  --global \
+  --copy \
+  -y
+
+npm --prefix ~/.agents/skills/replicate-websites run setup
+```
+
+Codex discovers project skills in `.agents/skills` and user skills in `~/.agents/skills`.
+
+### Claude Code
+
+Project install:
+
+```bash
+npx skills add L4A-ai/replicate-websites \
+  --skill replicate-websites \
+  --agent claude-code \
+  --copy \
+  -y
+
+npm --prefix .claude/skills/replicate-websites run setup
+```
+
+User install:
+
+```bash
+npx skills add L4A-ai/replicate-websites \
+  --skill replicate-websites \
+  --agent claude-code \
+  --global \
+  --copy \
+  -y
+
+npm --prefix ~/.claude/skills/replicate-websites run setup
+```
+
+### Multiple or other agents
+
+Repeat `--agent` to install the same canonical skill for more than one agent:
+
+```bash
+npx skills add L4A-ai/replicate-websites \
+  --skill replicate-websites \
+  --agent codex \
+  --agent claude-code \
+  --copy \
+  -y
+```
+
+For another supported agent, omit `--agent` and choose interactively, or pass an identifier
+supported by the installer. For a custom agent that reads a skills directory, copy
+`skills/replicate-websites` into that directory and run `npm run setup` inside the copy.
+
+## Use the skill
+
+Ask the agent to use `replicate-websites` and provide the authorized target URL, output directory,
+and required deployment mode. For agents with explicit skill invocation, a prompt can begin with:
+
+```text
+Use $replicate-websites to recreate this authorized webpage in an empty local workspace.
+Keep the source GET-only, compare all four default viewports, and run the integrity gates.
+```
+
+Read [`SKILL.md`](skills/replicate-websites/SKILL.md) for the complete capture, implementation,
+comparison, diagnosis, interaction, and release workflow.
+
+The core scripts can also be run directly:
+
+```bash
+SKILL_DIR=/absolute/path/to/replicate-websites
+
+node "$SKILL_DIR/scripts/compare-pages.mjs" \
+  --baseline https://example.com/authorized-page \
+  --candidate http://127.0.0.1:4173/ \
+  --out /tmp/replica-comparison
+```
+
+The default viewport set is desktop `1440x1000`, tablet `768x1024`, mobile `390x844`, and compact
+`360x800`.
+
+## Safety boundary
+
+- Inspect live third-party targets read-only; never submit their forms or send analytics writes.
+- Use copied content and assets only with ownership or permission.
+- Keep `authorized-local` output private and bound to loopback.
+- Give public third-party simulations a persistent, unambiguous disclosure.
+- Never use iframes, reverse proxies, source scripts, opaque hidden values, or full-page screenshots
+  to fake fidelity.
+- Keep applicant values and upload bytes transient; email remains disabled unless separately
+  implemented and explicitly enabled.
+
+See
+[`safety-and-provenance.md`](skills/replicate-websites/references/safety-and-provenance.md) for the
+full boundary.
+
+## Develop and validate
 
 ```bash
 git clone https://github.com/L4A-ai/replicate-websites.git
 cd replicate-websites
 npm ci --ignore-scripts
 npx playwright install chromium
-```
-
-The distributable skill is in `skills/replicate-websites`. The repository install above leaves its
-dependencies in the workspace root, so the most reproducible Codex install is a symlink:
-
-```bash
-ln -s "$PWD/skills/replicate-websites" "${CODEX_HOME:-$HOME/.codex}/skills/replicate-websites"
-```
-
-If you copy the skill directory instead, install its pinned runtime dependencies and Chromium from
-inside the copied directory before invoking `$replicate-websites`:
-
-```bash
-cp -R skills/replicate-websites "${CODEX_HOME:-$HOME/.codex}/skills/replicate-websites"
-cd "${CODEX_HOME:-$HOME/.codex}/skills/replicate-websites"
-npm install --ignore-scripts
-npx playwright install chromium
-```
-
-## Quick start
-
-First capture the source contract and confirm that repeated source captures are stable:
-
-```bash
-SKILL_DIR="$PWD/skills/replicate-websites"
-TARGET_URL="https://example.com/authorized-page"
-
-node "$SKILL_DIR/scripts/inspect-page.mjs" \
-  --url "$TARGET_URL" \
-  --viewport desktop:1440x1000 \
-  --viewport tablet:768x1024 \
-  --viewport mobile:390x844 \
-  --viewport compact:360x800 \
-  --out /tmp/source-contract
-
-node "$SKILL_DIR/scripts/compare-pages.mjs" \
-  --baseline "$TARGET_URL" \
-  --candidate "$TARGET_URL" \
-  --viewport desktop:1440x1000 \
-  --viewport tablet:768x1024 \
-  --viewport mobile:390x844 \
-  --viewport compact:360x800 \
-  --out /tmp/source-self
-```
-
-For an owned page or private authorized-local evaluation, generate a safe local starting point:
-
-```bash
-node "$SKILL_DIR/scripts/bootstrap-static-replica.mjs" \
-  --url "$TARGET_URL" \
-  --out /tmp/authorized-replica \
-  --mode authorized-local \
-  --ready-selector body
-
-cd /tmp/authorized-replica
-npm start
-```
-
-The bootstrap localizes observed visual assets, removes source scripts and embedded frames,
-sanitizes opaque form values, routes forms to `/api/applications`, and emits
-`fidelity-policy.json`. Use `--mode owned` only when the permission grant authorizes asset reuse and
-deployment.
-
-For a manual implementation, choose the mode at scaffold time. `authorized-local` is the safe
-default and binds only to loopback; `owned` binds on all interfaces for an authorized deployment;
-`public-simulation` also binds on all interfaces and includes a persistent visible disclosure:
-
-```bash
-node "$SKILL_DIR/scripts/scaffold-replica.mjs" \
-  --out /tmp/disclosed-simulation \
-  --mode public-simulation
-```
-
-Run the four-viewport fidelity loop and inspect the candidate. Exercise application mutations only
-against the loopback-only immutable starter backend; public deployments receive read-only fidelity
-and integrity checks:
-
-```bash
-node "$SKILL_DIR/scripts/run-fidelity-loop.mjs" \
-  --baseline "$TARGET_URL" \
-  --candidate http://127.0.0.1:4173/ \
-  --viewport desktop:1440x1000 \
-  --viewport tablet:768x1024 \
-  --viewport mobile:390x844 \
-  --viewport compact:360x800 \
-  --policy /tmp/authorized-replica/fidelity-policy.json \
-  --iteration initial \
-  --out /tmp/fidelity-series
-```
-
-Read [`SKILL.md`](skills/replicate-websites/SKILL.md) for the complete workflow and release gates.
-
-## Safety boundary
-
-- Live targets remain GET-only; submissions, beacons, WebSockets, popups, downloads, and service
-  workers are blocked.
-- Browser processes run with Chromium sandboxing, and a public target cannot read a different
-  private-network origin. A validating proxy performs fresh DNS resolution, rejects any
-  private/reserved answer, and pins each connection to a vetted address.
-- Generated candidates contain no live source scripts, external form actions, or opaque hidden
-  payloads. Candidate pages receive a restrictive CSP.
-- Persisted contracts and reports classify control values without retaining prefilled applicant
-  names, email addresses, phone numbers, freeform text, or opaque provider values.
-- `authorized-local` output binds to loopback and must stay private and out of git.
-- Public third-party simulations require permission for copied content/assets and an unambiguous
-  disclosure. This repository does not grant rights to third-party material.
-
-See [`safety-and-provenance.md`](skills/replicate-websites/references/safety-and-provenance.md).
-
-## Validate
-
-```bash
 npm run validate
+npm run check:install
 node evals/scripts/hash-skill.mjs
 ```
 
-CI installs Chromium, runs the synthetic browser/backend tests, runs the repository-owned skill
-structure validator, and scans the entire repository for benchmark-specific names, IDs, selectors,
-markup, CSS, captured/generated directories, raster/binary captures, image data URIs, and fixes.
+Repository layout:
 
-Clean-slate benchmark runs use a two-step evaluator flow: `evals/scripts/init-case.mjs` requires a
-full clean Git `HEAD`, verifies the frozen skill byte-for-byte against its tracked tree, binds a
-fresh builder ID to exact launcher-enforced writable roots, copies and hashes the dispatch prompt,
-and attests the empty workspace before dispatch. `evals/scripts/run-case.mjs` revalidates that v2
-attestation and writes a schema-conformant run record.
-The evaluator always supplies the exact fidelity gates; a generated candidate policy can contribute
-only exact fingerprints for audited local-form actions, structurally inert source links, and
-sanitized hidden placeholders. It cannot relax pixels, dimensions, stability, masks, resources, or
-candidate error limits.
+| Path | Purpose |
+|---|---|
+| `skills/replicate-websites/` | The only distributable Agent Skill |
+| `test/skill/` | Repository-owned runtime and browser tests |
+| `evals/` | Clean-slate evaluator, policies, schemas, and contributor documentation |
+| `.github/workflows/skill-ci.yml` | Validation, discovery, package, and hash checks |
 
-The scorer validates the candidate's manifest command but launches only an evaluator-staged copy of
-the verified audited backend and a bounded read-only public snapshot. It also emits evaluator-owned
-copies/hashes for the prompt and manifest, canonical target/viewports, an empty-base candidate patch
-and complete bounded file-hash inventory, diff diagnosis, and immutable evaluator/revision metadata.
-Use it only inside the evaluator-controlled experiment. See
-[`eval-protocol.md`](skills/replicate-websites/references/eval-protocol.md) for the exact commands and
-trust boundary.
-
-## Repository boundaries
-
-Downloaded pages, employer assets, screenshots, generated replicas, and raw evaluation runs are
-intentionally excluded from git. Only reusable tooling, synthetic fixtures, benchmark definitions,
-and aggregate evidence belong here.
+CI verifies that the repository exposes exactly one discoverable skill and that the npm tarball
+contains only the intended skill runtime.
 
 ## License
 
-The reusable code and documentation in this repository are licensed under the MIT License. Captured
-third-party content and assets are not covered and are not distributed here.
+The reusable code and documentation are licensed under the MIT License. Captured third-party
+content and assets are not covered and are not distributed here.

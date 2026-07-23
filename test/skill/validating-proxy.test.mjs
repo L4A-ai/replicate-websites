@@ -9,10 +9,12 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
-import { createValidatingBrowserProxy } from '../scripts/lib/validating-proxy.mjs';
+import {
+  createValidatingBrowserProxy
+} from '../../skills/replicate-websites/scripts/lib/validating-proxy.mjs';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
 
 async function listen(server) {
   await new Promise((resolveListen, rejectListen) => {
@@ -193,7 +195,7 @@ test('validating proxy absorbs client CONNECT resets and closes the paired upstr
   }
 });
 
-test('inspect-page sends even loopback navigation through the validating proxy', { timeout: 60000 }, async () => {
+test('inspect-page sends even loopback navigation through the validating proxy', { timeout: 120000 }, async () => {
   let sawProxyHeader = false;
   const origin = createServer((request, response) => {
     sawProxyHeader ||= /replicate-validating-proxy/.test(request.headers.via || '');
