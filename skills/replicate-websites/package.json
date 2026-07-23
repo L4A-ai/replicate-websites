@@ -1,9 +1,9 @@
 {
   "name": "@l4a-ai/replicate-websites-skill",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Codex skill and deterministic tooling for pixel-faithful website replication.",
+  "description": "Portable Agent Skill and deterministic tooling for pixel-faithful website replication.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
   },
   "homepage": "https://github.com/L4A-ai/replicate-websites/tree/main/skills/replicate-websites",
   "keywords": [
-    "codex-skill",
+    "agent-skill",
     "playwright",
     "pixel-diff",
     "website-replication"
@@ -20,7 +20,6 @@
   "files": [
     "SKILL.md",
     "LICENSE",
-    "agents",
     "assets",
     "references",
     "scripts"
@@ -30,10 +29,12 @@
     "replica-compare": "scripts/compare-pages.mjs",
     "replica-inspect": "scripts/inspect-page.mjs",
     "replica-assert": "scripts/assert-fidelity.mjs",
-    "replica-diagnose": "scripts/diagnose-diff.mjs"
+    "replica-diagnose": "scripts/diagnose-diff.mjs",
+    "replica-setup": "scripts/setup-runtime.mjs"
   },
   "scripts": {
-    "test": "node --test test/*.test.mjs"
+    "setup": "node scripts/setup-runtime.mjs",
+    "doctor": "node scripts/setup-runtime.mjs --check"
   },
   "dependencies": {
     "pixelmatch": "7.2.0",

@@ -9,7 +9,10 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import test from 'node:test';
 import { PNG } from 'pngjs';
-import { cssDependencyReferer, fetchCssDependency } from '../scripts/bootstrap-static-replica.mjs';
+import {
+  cssDependencyReferer,
+  fetchCssDependency
+} from '../../skills/replicate-websites/scripts/bootstrap-static-replica.mjs';
 import {
   assertSafeHttpUrl,
   blocksPrivateDestination,
@@ -20,10 +23,10 @@ import {
   isPrivateOrReservedAddress,
   redactReportData,
   redactSensitiveUrl
-} from '../scripts/lib/network-safety.mjs';
+} from '../../skills/replicate-websites/scripts/lib/network-safety.mjs';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
 const repositoryRoot = resolve(skillRoot, '../..');
 const script = (name) => join(skillRoot, 'scripts', name);
 const bundledStarterAppSha256 = createHash('sha256')

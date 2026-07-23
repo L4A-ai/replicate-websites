@@ -1,13 +1,9 @@
 #!/usr/bin/env node
 
-import { createRequire } from 'node:module';
 import { promises as fs } from 'node:fs';
-import { homedir } from 'node:os';
-import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-
-const scriptDirectory = dirname(fileURLToPath(import.meta.url));
-const skillDirectory = resolve(scriptDirectory, '..');
+import { join, resolve } from 'node:path';
+import { pathToFileURL } from 'node:url';
+import { resolveRuntimePackage } from './lib/runtime-dependencies.mjs';
 
 function usage() {
   return `Rank pixel-diff bands and map them to inspected DOM elements.
@@ -63,21 +59,6 @@ function parseArguments(argv) {
   }
   if (!options.help && !options.report) throw new Error('--report is required.');
   return options;
-}
-
-function resolvePackage(name) {
-  for (const root of [
-    skillDirectory,
-    process.cwd(),
-    join(homedir(), '.cache/codex-runtimes/codex-primary-runtime/dependencies/node')
-  ]) {
-    try {
-      return createRequire(join(root, '__replica_diagnose_resolver.cjs')).resolve(name);
-    } catch {
-      // Continue.
-    }
-  }
-  throw new Error(`Cannot resolve ${name}. Run npm install in the skill repository.`);
 }
 
 async function optionalJson(pathname) {
@@ -205,7 +186,7 @@ async function main() {
     return;
   }
   const summary = JSON.parse(await fs.readFile(join(options.report, 'summary.json'), 'utf8'));
-  const pngModule = await import(pathToFileURL(resolvePackage('pngjs')).href);
+  const pngModule = await import(pathToFileURL(resolveRuntimePackage('pngjs')).href);
   const PNG = pngModule.PNG || pngModule.default?.PNG;
   if (!PNG) throw new Error('Resolved pngjs package has unexpected exports.');
   const results = [];

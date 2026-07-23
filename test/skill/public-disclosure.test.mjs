@@ -9,7 +9,7 @@ import { promisify } from 'node:util';
 import test from 'node:test';
 
 const execFileAsync = promisify(execFile);
-const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const skillRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/replicate-websites');
 const script = (name) => join(skillRoot, 'scripts', name);
 
 async function freePort() {
@@ -183,7 +183,10 @@ test('public-simulation mode and disclosure are rendered integrity gates', { tim
         candidate.variant.name === name
       ));
       assert.ok(entry);
-      assert.ok(entry.disclosures.every((disclosure) => disclosure.visibleAtStart !== true));
+      assert.ok(
+        entry.disclosures.every((disclosure) => disclosure.visibleAtStart !== true),
+        JSON.stringify(entry)
+      );
     }
     const mediaResult = await runIntegrity(
       mediaInspection,

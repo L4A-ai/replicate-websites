@@ -15,7 +15,6 @@ geometry, semantics, accessibility, responsive states, and interactions as indep
 - Read [references/diagnosis.md](references/diagnosis.md) when a comparison is not already near exact.
 - Read [references/job-application-contract.md](references/job-application-contract.md) for any application form or mock submission backend.
 - Read [references/provider-patterns.md](references/provider-patterns.md) only when the target is an ATS or employer careers page.
-- Read [references/eval-protocol.md](references/eval-protocol.md) when evaluating this skill or claiming generalization.
 
 ## Run the core workflow
 
@@ -25,8 +24,8 @@ Set the installed skill directory once:
 SKILL_DIR=/absolute/path/to/replicate-websites
 ```
 
-If the skill was copied rather than linked from its repository, run `npm install --ignore-scripts`
-and `npx playwright install chromium` inside `SKILL_DIR` before using the browser scripts.
+After installing the skill, run `npm run setup` inside `SKILL_DIR` once. This installs the pinned
+runtime dependencies and Chromium. Run `npm run doctor` to verify the runtime without modifying it.
 
 Use an isolated, empty candidate workspace. Do not scaffold it until choosing the implementation
 path in step 3; the rendered-DOM bootstrap creates the service itself.
